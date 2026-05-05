@@ -1,7 +1,6 @@
 package org.dromara.system.controller.monitor;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import com.baomidou.lock.annotation.Lock4j;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.constant.CacheConstants;
@@ -71,7 +70,6 @@ public class SysLogininforController extends BaseController {
      */
     @SaCheckPermission("monitor:logininfor:remove")
     @Log(title = "登录日志", businessType = BusinessType.CLEAN)
-    @Lock4j
     @DeleteMapping("/clean")
     public R<Void> clean() {
         logininforService.cleanLogininfor();

@@ -6,7 +6,6 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Opt;
 import cn.hutool.core.util.ObjectUtil;
-import com.baomidou.lock.annotation.Lock4j;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.zhyd.oauth.model.AuthUser;
@@ -70,7 +69,6 @@ public class SysLoginService {
      *
      * @param authUserData 授权响应实体
      */
-    @Lock4j
     public void socialRegister(AuthUser authUserData) {
         String authId = authUserData.getSource() + authUserData.getUuid();
         // 第三方用户信息

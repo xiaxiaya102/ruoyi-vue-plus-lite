@@ -205,9 +205,6 @@ springdoc:
       packages-to-scan: org.dromara.system
     - group: 4.代码生成模块
       packages-to-scan: org.dromara.generator
-    - group: 5.工作流模块
-      packages-to-scan: org.dromara.workflow
-
 # 防止XSS攻击
 xss:
   # 过滤开关
@@ -215,13 +212,6 @@ xss:
   # 排除链接
   excludeUrls:
     - /system/notice
-
---- # 分布式锁 lock4j 全局配置
-lock4j:
-  # 获取分布式锁超时时间，默认为 3000 毫秒
-  acquire-timeout: 3000
-  # 分布式锁的超时时间，默认为 30 秒
-  expire: 30000
 
 --- # Actuator 监控端点的配置项
 management:

@@ -3,7 +3,6 @@ package org.dromara.generator.controller;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.io.IoUtil;
-import com.baomidou.lock.annotation.Lock4j;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.domain.R;
@@ -95,7 +94,6 @@ public class GenController extends BaseController {
      */
     @SaCheckPermission("tool:gen:import")
     @Log(title = "代码生成", businessType = BusinessType.IMPORT)
-    @Lock4j(keys = {"#dataName"}, acquireTimeout = 10000)
     @RepeatSubmit()
     @PostMapping("/importTable")
     public R<Void> importTableSave(String tables, String dataName) {
@@ -177,7 +175,6 @@ public class GenController extends BaseController {
      */
     @SaCheckPermission("tool:gen:edit")
     @Log(title = "代码生成", businessType = BusinessType.UPDATE)
-    @Lock4j(keys = {"#tableId"}, acquireTimeout = 5000)
     @GetMapping("/synchDb/{tableId}")
     public R<Void> synchDb(@PathVariable("tableId") Long tableId) {
         genTableService.synchDb(tableId);

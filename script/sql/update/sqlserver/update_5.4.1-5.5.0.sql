@@ -121,17 +121,12 @@ GO
 INSERT flow_spel VALUES (2, NULL, NULL, N'initiator', N'${initiator}', N'流程发起人', N'0', N'0', 103, 1, GETDATE(), 1, GETDATE());
 GO
 
-INSERT sys_menu VALUES (11801, N'流程表达式', N'11616', 2, N'spel', N'workflow/spel/index', N'', 1, 0, N'C', N'0', N'0', N'workflow:spel:list', N'input', 103, 1, GETDATE(), 1, GETDATE(), N'流程达式定义菜单');
+put', 103, 1, GETDATE(), 1, GETDATE(), N'流程达式定义菜单');
 GO
-INSERT sys_menu VALUES (11802, N'流程spel表达式定义查询', N'11801', 1, N'#', N'', NULL, 1, 0, N'F', N'0', N'0', N'workflow:spel:query', N'#', 103, 1, GETDATE(), NULL, NULL, N'');
 GO
-INSERT sys_menu VALUES (11803, N'流程spel表达式定义新增', N'11801', 2, N'#', N'', NULL, 1, 0, N'F', N'0', N'0', N'workflow:spel:add', N'#', 103, 1, GETDATE(), NULL, NULL, N'');
 GO
-INSERT sys_menu VALUES (11804, N'流程spel表达式定义修改', N'11801', 3, N'#', N'', NULL, 1, 0, N'F', N'0', N'0', N'workflow:spel:edit', N'#', 103, 1, GETDATE(), NULL, NULL, N'');
 GO
-INSERT sys_menu VALUES (11805, N'流程spel表达式定义删除', N'11801', 4, N'#', N'', NULL, 1, 0, N'F', N'0', N'0', N'workflow:spel:remove', N'#', 103, 1, GETDATE(), NULL, NULL, N'');
 GO
-INSERT sys_menu VALUES (11806, N'流程spel表达式定义导出', N'11801', 5, N'#', N'', NULL, 1, 0, N'F', N'0', N'0', N'workflow:spel:export', N'#', 103, 1, GETDATE(), NULL, NULL, N'');
 GO
 
 ALTER TABLE flow_definition ADD model_value VARCHAR(40) NOT NULL CONSTRAINT DF_flow_definition_model_value DEFAULT 'CLASSICS';
@@ -290,5 +285,5 @@ update sys_menu set remark = N'/system/dict' where menu_id = 132;
 GO
 update sys_menu set remark = N'/system/oss' where menu_id = 133;
 GO
-update sys_menu set remark = N'/workflow/processDefinition' where menu_id = 11700;
+u_id = 11700;
 GO

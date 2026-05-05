@@ -1701,11 +1701,11 @@ GO
 INSERT sys_menu VALUES (133, N'文件配置管理',  1,   10, N'oss-config/index',              N'system/oss/config', N'', 1, 1, N'C', N'1', N'0', N'system:ossConfig:list',  N'#',                103, 1, getdate(), null, null, N'/system/oss');
 GO
 
-INSERT sys_menu VALUES (117, N'Admin监控', 2, 5, N'Admin', N'monitor/admin/index', N'', 1, 0, N'C', N'0', N'0', N'monitor:admin:list', N'dashboard', 103, 1, getdate(), NULL, NULL, N'Admin监控菜单');
+监控菜单');
 GO
 INSERT sys_menu VALUES (118, N'文件管理', 1, 10, N'oss', N'system/oss/index', N'', 1, 0, N'C', '0', N'0', N'system:oss:list', N'upload', 103, 1, getdate(), NULL, NULL, N'文件管理菜单');
 GO
-INSERT sys_menu VALUES (120, N'任务调度中心', 2, 5, N'snailjob', N'monitor/snailjob/index', N'', 1, 0, N'C', N'0', N'0', N'monitor:snailjob:list', N'job', 103, 1, getdate(), NULL, NULL, N'SnailJob控制台菜单');
+ailJob控制台菜单');
 GO
 INSERT sys_menu VALUES (500, N'操作日志', 108, 1, N'operlog', N'monitor/operlog/index', N'', 1, 0, N'C', N'0', N'0', N'monitor:operlog:list', N'form', 103, 1, getdate(), NULL, NULL, N'操作日志菜单')
 GO
@@ -1872,30 +1872,18 @@ GO
 INSERT sys_menu VALUES (1065, N'客户端管理导出', 123, 5, N'#', N'', N'', 1, 0, N'F', N'0', N'0', N'system:client:export', N'#', 103, 1, getdate(), NULL, NULL, N'');
 GO
 -- 测试菜单
-INSERT sys_menu VALUES (1500, N'测试单表', 5, 1, N'demo', N'demo/demo/index', N'', 1, 0, N'C', N'0', N'0', N'demo:demo:list', N'#', 103, 1, getdate(), NULL, NULL, N'测试单表菜单');
 GO
-INSERT sys_menu VALUES (1501, N'测试单表查询', 1500, 1, N'#', N'', N'', 1, 0, N'F', N'0', N'0', N'demo:demo:query', N'#', 103, 1, getdate(), NULL, NULL, N'');
 GO
-INSERT sys_menu VALUES (1502, N'测试单表新增', 1500, 2, N'#', N'', N'', 1, 0, N'F', N'0', N'0', N'demo:demo:add', N'#', 103, 1, getdate(), NULL, NULL, N'');
 GO
-INSERT sys_menu VALUES (1503, N'测试单表修改', 1500, 3, N'#', N'', N'', 1, 0, N'F', N'0', N'0', N'demo:demo:edit', N'#', 103, 1, getdate(), NULL, NULL, N'');
 GO
-INSERT sys_menu VALUES (1504, N'测试单表删除', 1500, 4, N'#', N'', N'', 1, 0, N'F', N'0', N'0', N'demo:demo:remove', N'#', 103, 1, getdate(), NULL, NULL, N'');
 GO
-INSERT sys_menu VALUES (1505, N'测试单表导出', 1500, 5, N'#', N'', N'', 1, 0, N'F', N'0', N'0', N'demo:demo:export', N'#', 103, 1, getdate(), NULL, NULL, N'');
 GO
 
-INSERT sys_menu VALUES (1506, N'测试树表', 5, 1, N'tree', N'demo/tree/index', N'', 1, 0, N'C', N'0', N'0', N'demo:tree:list', N'#', 103, 1, getdate(), NULL, NULL, N'测试树表菜单');
 GO
-INSERT sys_menu VALUES (1507, N'测试树表查询', 1506, 1, N'#', N'', N'', 1, 0, N'F', N'0', N'0', N'demo:tree:query', N'#', 103, 1, getdate(), NULL, NULL, N'');
 GO
-INSERT sys_menu VALUES (1508, N'测试树表新增', 1506, 2, N'#', N'', N'', 1, 0, N'F', N'0', N'0', N'demo:tree:add', N'#', 103, 1, getdate(), NULL, NULL, N'');
 GO
-INSERT sys_menu VALUES (1509, N'测试树表修改', 1506, 3, N'#', N'', N'', 1, 0, N'F', N'0', N'0', N'demo:tree:edit', N'#', 103, 1, getdate(), NULL, NULL, N'');
 GO
-INSERT sys_menu VALUES (1510, N'测试树表删除', 1506, 4, N'#', N'', N'', 1, 0, N'F', N'0', N'0', N'demo:tree:remove', N'#', 103, 1, getdate(), NULL, NULL, N'');
 GO
-INSERT sys_menu VALUES (1511, N'测试树表导出', 1506, 5, N'#', N'', N'', 1, 0, N'F', N'0', N'0', N'demo:tree:export', N'#', 103, 1, getdate(), NULL, NULL, N'');
 GO
 
 CREATE TABLE sys_notice

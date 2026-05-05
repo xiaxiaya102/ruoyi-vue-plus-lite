@@ -26,6 +26,11 @@
             <artifactId>ruoyi-common-satoken</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+        </dependency>
+
         <!-- dynamic-datasource 多数据源-->
         <dependency>
             <groupId>com.baomidou</groupId>

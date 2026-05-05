@@ -1,16 +1,14 @@
 package org.dromara.common.redis.handler;
 
 import org.dromara.common.core.utils.StringUtils;
-import org.redisson.api.NameMapper;
-
 /**
- * redis缓存key前缀处理
+ * 本地缓存key前缀处理
  *
  * @author ye
  * @date 2022/7/14 17:44
  * @since 4.3.0
  */
-public class KeyPrefixHandler implements NameMapper {
+public class KeyPrefixHandler {
 
     private final String keyPrefix;
 
@@ -22,7 +20,6 @@ public class KeyPrefixHandler implements NameMapper {
     /**
      * 增加前缀
      */
-    @Override
     public String map(String name) {
         if (StringUtils.isBlank(name)) {
             return null;
@@ -36,7 +33,6 @@ public class KeyPrefixHandler implements NameMapper {
     /**
      * 去除前缀
      */
-    @Override
     public String unmap(String name) {
         if (StringUtils.isBlank(name)) {
             return null;

@@ -1,7 +1,6 @@
 package org.dromara.system.controller.system;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import com.baomidou.lock.annotation.Lock4j;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.domain.R;
@@ -113,7 +112,6 @@ public class SysDictTypeController extends BaseController {
      */
     @SaCheckPermission("system:dict:remove")
     @Log(title = "字典类型", businessType = BusinessType.CLEAN)
-    @Lock4j
     @DeleteMapping("/refreshCache")
     public R<Void> refreshCache() {
         dictTypeService.resetDictCache();

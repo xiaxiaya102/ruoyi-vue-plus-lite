@@ -1,97 +1,38 @@
-/**
- * Copyright (c) 2013-2021 Nikita Koksharov
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.dromara.common.redis.manager;
 
-import org.dromara.common.redis.utils.RedisUtils;
-import org.redisson.api.RMap;
-import org.redisson.api.RMapCache;
-import org.redisson.spring.cache.CacheConfig;
-import org.redisson.spring.cache.RedissonCache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import org.springframework.boot.convert.DurationStyle;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.transaction.TransactionAwareCacheDecorator;
 import org.springframework.util.StringUtils;
 
+import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
- * A {@link org.springframework.cache.CacheManager} implementation
- * backed by Redisson instance.
+ * Spring Cache manager backed by local Caffeine caches.
  * <p>
- * 修改 RedissonSpringCacheManager 源码
- * 重写 cacheName 处理方法 支持多参数
- *
- * @author Nikita Koksharov
- *
+ * Cache names keep the original format: name#ttl#maxIdle#maxSize#local.
  */
-@SuppressWarnings("unchecked")
 public class PlusSpringCacheManager implements CacheManager {
 
     private boolean dynamic = true;
-
     private boolean allowNullValues = true;
-
     private boolean transactionAware = true;
+    private final ConcurrentMap<String, Cache> instanceMap = new ConcurrentHashMap<>();
 
-    Map<String, CacheConfig> configMap = new ConcurrentHashMap<>();
-    ConcurrentMap<String, Cache> instanceMap = new ConcurrentHashMap<>();
-
-    /**
-     * Creates CacheManager supplied by Redisson instance
-     */
-    public PlusSpringCacheManager() {
-    }
-
-
-    /**
-     * Defines possibility of storing {@code null} values.
-     * <p>
-     * Default is <code>true</code>
-     *
-     * @param allowNullValues stores if <code>true</code>
-     */
     public void setAllowNullValues(boolean allowNullValues) {
         this.allowNullValues = allowNullValues;
     }
 
-    /**
-     * Defines if cache aware of Spring-managed transactions.
-     * If {@code true} put/evict operations are executed only for successful transaction in after-commit phase.
-     * <p>
-     * Default is <code>false</code>
-     *
-     * @param transactionAware cache is transaction aware if <code>true</code>
-     */
     public void setTransactionAware(boolean transactionAware) {
         this.transactionAware = transactionAware;
     }
 
-    /**
-     * Defines 'fixed' cache names.
-     * A new cache instance will not be created in dynamic for non-defined names.
-     * <p>
-     * `null` parameter setups dynamic mode
-     *
-     * @param names of caches
-     */
     public void setCacheNames(Collection<String> names) {
         if (names != null) {
             for (String name : names) {
@@ -103,100 +44,49 @@ public class PlusSpringCacheManager implements CacheManager {
         }
     }
 
-    /**
-     * Set cache config mapped by cache name
-     *
-     * @param config object
-     */
-    public void setConfig(Map<String, ? extends CacheConfig> config) {
-        this.configMap = (Map<String, CacheConfig>) config;
-    }
-
-    protected CacheConfig createDefaultConfig() {
-        return new CacheConfig();
-    }
-
     @Override
     public Cache getCache(String name) {
-        // 重写 cacheName 支持多参数
-        String[] array = StringUtils.delimitedListToStringArray(name, "#");
-        name = array[0];
-
-        Cache cache = instanceMap.get(name);
+        CacheSpec spec = CacheSpec.parse(name);
+        Cache cache = instanceMap.get(spec.name());
         if (cache != null) {
             return cache;
         }
         if (!dynamic) {
-            return cache;
+            return null;
         }
-
-        CacheConfig config = configMap.get(name);
-        if (config == null) {
-            config = createDefaultConfig();
-            configMap.put(name, config);
-        }
-
-        if (array.length > 1) {
-            config.setTTL(DurationStyle.detectAndParse(array[1]).toMillis());
-        }
-        if (array.length > 2) {
-            config.setMaxIdleTime(DurationStyle.detectAndParse(array[2]).toMillis());
-        }
-        if (array.length > 3) {
-            config.setMaxSize(Integer.parseInt(array[3]));
-        }
-        int local = 1;
-        if (array.length > 4) {
-            local = Integer.parseInt(array[4]);
-        }
-
-        if (config.getMaxIdleTime() == 0 && config.getTTL() == 0 && config.getMaxSize() == 0) {
-            return createMap(name, config, local);
-        }
-
-        return createMapCache(name, config, local);
+        Cache created = createCache(spec);
+        Cache oldCache = instanceMap.putIfAbsent(spec.name(), created);
+        return oldCache == null ? created : oldCache;
     }
 
-    private Cache createMap(String name, CacheConfig config, int local) {
-        RMap<Object, Object> map = RedisUtils.getClient().getMap(name);
-
-        Cache cache = new RedissonCache(map, allowNullValues);
-        if (local == 1) {
-            cache = new CaffeineCacheDecorator(name, cache);
+    private Cache createCache(CacheSpec spec) {
+        Caffeine<Object, Object> builder = Caffeine.newBuilder();
+        if (spec.ttl() != null && !spec.ttl().isZero() && !spec.ttl().isNegative()) {
+            builder.expireAfterWrite(spec.ttl());
         }
-        if (transactionAware) {
-            cache = new TransactionAwareCacheDecorator(cache);
+        if (spec.maxIdle() != null && !spec.maxIdle().isZero() && !spec.maxIdle().isNegative()) {
+            builder.expireAfterAccess(spec.maxIdle());
         }
-        Cache oldCache = instanceMap.putIfAbsent(name, cache);
-        if (oldCache != null) {
-            cache = oldCache;
+        if (spec.maxSize() > 0) {
+            builder.maximumSize(spec.maxSize());
         }
-        return cache;
-    }
-
-    private Cache createMapCache(String name, CacheConfig config, int local) {
-        RMapCache<Object, Object> map = RedisUtils.getClient().getMapCache(name);
-
-        Cache cache = new RedissonCache(map, config, allowNullValues);
-        if (local == 1) {
-            cache = new CaffeineCacheDecorator(name, cache);
-        }
-        if (transactionAware) {
-            cache = new TransactionAwareCacheDecorator(cache);
-        }
-        Cache oldCache = instanceMap.putIfAbsent(name, cache);
-        if (oldCache != null) {
-            cache = oldCache;
-        } else {
-            map.setMaxSize(config.getMaxSize());
-        }
-        return cache;
+        Cache cache = new LocalCaffeineCache(spec.name(), builder, allowNullValues);
+        return transactionAware ? new TransactionAwareCacheDecorator(cache) : cache;
     }
 
     @Override
     public Collection<String> getCacheNames() {
-        return Collections.unmodifiableSet(configMap.keySet());
+        return Collections.unmodifiableSet(instanceMap.keySet());
     }
 
-
+    private record CacheSpec(String name, Duration ttl, Duration maxIdle, long maxSize) {
+        private static CacheSpec parse(String cacheName) {
+            String[] array = StringUtils.delimitedListToStringArray(cacheName, "#");
+            String name = array[0];
+            Duration ttl = array.length > 1 ? DurationStyle.detectAndParse(array[1]) : null;
+            Duration maxIdle = array.length > 2 ? DurationStyle.detectAndParse(array[2]) : null;
+            long maxSize = array.length > 3 ? Long.parseLong(array[3]) : 0;
+            return new CacheSpec(name, ttl, maxIdle, maxSize);
+        }
+    }
 }

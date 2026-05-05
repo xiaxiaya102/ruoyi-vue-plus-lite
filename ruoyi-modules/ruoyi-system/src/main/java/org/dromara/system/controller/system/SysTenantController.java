@@ -2,7 +2,6 @@ package org.dromara.system.controller.system;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.annotation.SaCheckRole;
-import com.baomidou.lock.annotation.Lock4j;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -86,7 +85,6 @@ public class SysTenantController extends BaseController {
     @SaCheckRole(TenantConstants.SUPER_ADMIN_ROLE_KEY)
     @SaCheckPermission("system:tenant:add")
     @Log(title = "租户管理", businessType = BusinessType.INSERT)
-    @Lock4j
     @RepeatSubmit()
     @PostMapping()
     public R<Void> add(@Validated(AddGroup.class) @RequestBody SysTenantBo bo) {
@@ -171,7 +169,6 @@ public class SysTenantController extends BaseController {
     @SaCheckRole(TenantConstants.SUPER_ADMIN_ROLE_KEY)
     @SaCheckPermission("system:tenant:edit")
     @Log(title = "租户管理", businessType = BusinessType.UPDATE)
-    @Lock4j
     @GetMapping("/syncTenantPackage")
     public R<Void> syncTenantPackage(@NotBlank(message = "租户ID不能为空") String tenantId,
                                      @NotNull(message = "套餐ID不能为空") Long packageId) {
@@ -183,7 +180,6 @@ public class SysTenantController extends BaseController {
      */
     @SaCheckRole(TenantConstants.SUPER_ADMIN_ROLE_KEY)
     @Log(title = "租户管理", businessType = BusinessType.INSERT)
-    @Lock4j
     @GetMapping("/syncTenantDict")
     public R<Void> syncTenantDict() {
         if (!TenantHelper.isEnable()) {
@@ -198,7 +194,6 @@ public class SysTenantController extends BaseController {
      */
     @SaCheckRole(TenantConstants.SUPER_ADMIN_ROLE_KEY)
     @Log(title = "租户管理", businessType = BusinessType.INSERT)
-    @Lock4j
     @GetMapping("/syncTenantConfig")
     public R<Void> syncTenantConfig() {
         if (!TenantHelper.isEnable()) {

@@ -2,238 +2,151 @@ package org.dromara.common.redis.utils;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.dromara.common.core.utils.SpringUtils;
-import org.redisson.api.*;
 
+import java.util.Comparator;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.DelayQueue;
+import java.util.concurrent.Delayed;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 /**
- * 分布式队列工具
- * 轻量级队列 重量级数据量 请使用 MQ
- * 要求 redis 5.X 以上
- *
- * @author Lion Li
- * @version 3.6.0 新增
- * @deprecated redisson 新版本已经将队列功能标记删除 一些技术问题无法解决 建议搭建MQ使用
+ * Process-local queue utility.
  */
 @Deprecated
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class QueueUtils {
 
-    private static final RedissonClient CLIENT = SpringUtils.getBean(RedissonClient.class);
+    private static final ConcurrentHashMap<String, LinkedBlockingQueue<Object>> QUEUES = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, DelayQueue<DelayedValue<Object>>> DELAYED_QUEUES = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, PriorityBlockingQueue<Object>> PRIORITY_QUEUES = new ConcurrentHashMap<>();
 
-
-    /**
-     * 获取客户端实例
-     */
-    public static RedissonClient getClient() {
-        return CLIENT;
-    }
-
-    /**
-     * 添加普通队列数据
-     *
-     * @param queueName 队列名
-     * @param data      数据
-     */
     public static <T> boolean addQueueObject(String queueName, T data) {
-        RBlockingQueue<T> queue = CLIENT.getBlockingQueue(queueName);
-        return queue.offer(data);
+        return QUEUES.computeIfAbsent(queueName, key -> new LinkedBlockingQueue<>()).offer(data);
     }
 
-    /**
-     * 通用获取一个队列数据 没有数据返回 null(不支持延迟队列)
-     *
-     * @param queueName 队列名
-     */
+    @SuppressWarnings("unchecked")
     public static <T> T getQueueObject(String queueName) {
-        RBlockingQueue<T> queue = CLIENT.getBlockingQueue(queueName);
-        return queue.poll();
+        return (T) QUEUES.computeIfAbsent(queueName, key -> new LinkedBlockingQueue<>()).poll();
     }
 
-    /**
-     * 通用删除队列数据(不支持延迟队列)
-     */
     public static <T> boolean removeQueueObject(String queueName, T data) {
-        RBlockingQueue<T> queue = CLIENT.getBlockingQueue(queueName);
-        return queue.remove(data);
+        return QUEUES.computeIfAbsent(queueName, key -> new LinkedBlockingQueue<>()).remove(data);
     }
 
-    /**
-     * 通用销毁队列 所有阻塞监听 报错(不支持延迟队列)
-     */
     public static <T> boolean destroyQueue(String queueName) {
-        RBlockingQueue<T> queue = CLIENT.getBlockingQueue(queueName);
-        return queue.delete();
+        return QUEUES.remove(queueName) != null;
     }
 
-    /**
-     * 添加延迟队列数据 默认毫秒
-     *
-     * @param queueName 队列名
-     * @param data      数据
-     * @param time      延迟时间
-     */
     public static <T> void addDelayedQueueObject(String queueName, T data, long time) {
         addDelayedQueueObject(queueName, data, time, TimeUnit.MILLISECONDS);
     }
 
-    /**
-     * 添加延迟队列数据
-     *
-     * @param queueName 队列名
-     * @param data      数据
-     * @param time      延迟时间
-     * @param timeUnit  单位
-     */
     public static <T> void addDelayedQueueObject(String queueName, T data, long time, TimeUnit timeUnit) {
-        RBlockingQueue<T> queue = CLIENT.getBlockingQueue(queueName);
-        RDelayedQueue<T> delayedQueue = CLIENT.getDelayedQueue(queue);
-        delayedQueue.offer(data, time, timeUnit);
+        DELAYED_QUEUES.computeIfAbsent(queueName, key -> new DelayQueue<>())
+            .offer(new DelayedValue<>(data, timeUnit.toMillis(time)));
     }
 
-    /**
-     * 获取一个延迟队列数据 没有数据返回 null
-     *
-     * @param queueName 队列名
-     */
+    @SuppressWarnings("unchecked")
     public static <T> T getDelayedQueueObject(String queueName) {
-        RBlockingQueue<T> queue = CLIENT.getBlockingQueue(queueName);
-        RDelayedQueue<T> delayedQueue = CLIENT.getDelayedQueue(queue);
-        return delayedQueue.poll();
+        DelayedValue<Object> value = DELAYED_QUEUES.computeIfAbsent(queueName, key -> new DelayQueue<>()).poll();
+        return value == null ? null : (T) value.value();
     }
 
-    /**
-     * 删除延迟队列数据
-     */
     public static <T> boolean removeDelayedQueueObject(String queueName, T data) {
-        RBlockingQueue<T> queue = CLIENT.getBlockingQueue(queueName);
-        RDelayedQueue<T> delayedQueue = CLIENT.getDelayedQueue(queue);
-        return delayedQueue.remove(data);
+        return DELAYED_QUEUES.computeIfAbsent(queueName, key -> new DelayQueue<>())
+            .removeIf(value -> value.value().equals(data));
     }
 
-    /**
-     * 销毁延迟队列 所有阻塞监听 报错
-     */
     public static <T> void destroyDelayedQueue(String queueName) {
-        RBlockingQueue<T> queue = CLIENT.getBlockingQueue(queueName);
-        RDelayedQueue<T> delayedQueue = CLIENT.getDelayedQueue(queue);
-        delayedQueue.destroy();
+        DELAYED_QUEUES.remove(queueName);
     }
 
-    /**
-     * 添加优先队列数据
-     *
-     * @param queueName 队列名
-     * @param data      数据
-     */
     public static <T> boolean addPriorityQueueObject(String queueName, T data) {
-        RPriorityBlockingQueue<T> priorityBlockingQueue = CLIENT.getPriorityBlockingQueue(queueName);
-        return priorityBlockingQueue.offer(data);
+        return PRIORITY_QUEUES.computeIfAbsent(queueName, key -> new PriorityBlockingQueue<>(11, comparator()))
+            .offer(data);
     }
 
-    /**
-     * 优先队列获取一个队列数据 没有数据返回 null(不支持延迟队列)
-     *
-     * @param queueName 队列名
-     */
+    @SuppressWarnings("unchecked")
     public static <T> T getPriorityQueueObject(String queueName) {
-        RPriorityBlockingQueue<T> queue = CLIENT.getPriorityBlockingQueue(queueName);
-        return queue.poll();
+        return (T) PRIORITY_QUEUES.computeIfAbsent(queueName, key -> new PriorityBlockingQueue<>(11, comparator())).poll();
     }
 
-    /**
-     * 优先队列删除队列数据(不支持延迟队列)
-     */
     public static <T> boolean removePriorityQueueObject(String queueName, T data) {
-        RPriorityBlockingQueue<T> queue = CLIENT.getPriorityBlockingQueue(queueName);
-        return queue.remove(data);
+        return PRIORITY_QUEUES.computeIfAbsent(queueName, key -> new PriorityBlockingQueue<>(11, comparator())).remove(data);
     }
 
-    /**
-     * 优先队列销毁队列 所有阻塞监听 报错(不支持延迟队列)
-     */
     public static <T> boolean destroyPriorityQueue(String queueName) {
-        RPriorityBlockingQueue<T> queue = CLIENT.getPriorityBlockingQueue(queueName);
-        return queue.delete();
+        return PRIORITY_QUEUES.remove(queueName) != null;
     }
 
-    /**
-     * 尝试设置 有界队列 容量 用于限制数量
-     *
-     * @param queueName 队列名
-     * @param capacity  容量
-     */
     public static <T> boolean trySetBoundedQueueCapacity(String queueName, int capacity) {
-        RBoundedBlockingQueue<T> boundedBlockingQueue = CLIENT.getBoundedBlockingQueue(queueName);
-        return boundedBlockingQueue.trySetCapacity(capacity);
+        QUEUES.computeIfAbsent(queueName, key -> new LinkedBlockingQueue<>(capacity));
+        return true;
     }
 
-    /**
-     * 尝试设置 有界队列 容量 用于限制数量
-     *
-     * @param queueName 队列名
-     * @param capacity  容量
-     * @param destroy   是否销毁
-     */
     public static <T> boolean trySetBoundedQueueCapacity(String queueName, int capacity, boolean destroy) {
-        RBoundedBlockingQueue<T> boundedBlockingQueue = CLIENT.getBoundedBlockingQueue(queueName);
         if (destroy) {
-            boundedBlockingQueue.delete();
+            QUEUES.remove(queueName);
         }
-        return boundedBlockingQueue.trySetCapacity(capacity);
+        return trySetBoundedQueueCapacity(queueName, capacity);
     }
 
-    /**
-     * 添加有界队列数据
-     *
-     * @param queueName 队列名
-     * @param data      数据
-     * @return 添加成功 true 已达到界限 false
-     */
     public static <T> boolean addBoundedQueueObject(String queueName, T data) {
-        RBoundedBlockingQueue<T> boundedBlockingQueue = CLIENT.getBoundedBlockingQueue(queueName);
-        return boundedBlockingQueue.offer(data);
+        return addQueueObject(queueName, data);
     }
 
-    /**
-     * 有界队列获取一个队列数据 没有数据返回 null(不支持延迟队列)
-     *
-     * @param queueName 队列名
-     */
     public static <T> T getBoundedQueueObject(String queueName) {
-        RBoundedBlockingQueue<T> queue = CLIENT.getBoundedBlockingQueue(queueName);
-        return queue.poll();
+        return getQueueObject(queueName);
     }
 
-    /**
-     * 有界队列删除队列数据(不支持延迟队列)
-     */
     public static <T> boolean removeBoundedQueueObject(String queueName, T data) {
-        RBoundedBlockingQueue<T> queue = CLIENT.getBoundedBlockingQueue(queueName);
-        return queue.remove(data);
+        return removeQueueObject(queueName, data);
     }
 
-    /**
-     * 有界队列销毁队列 所有阻塞监听 报错(不支持延迟队列)
-     */
     public static <T> boolean destroyBoundedQueue(String queueName) {
-        RBoundedBlockingQueue<T> queue = CLIENT.getBoundedBlockingQueue(queueName);
-        return queue.delete();
+        return destroyQueue(queueName);
     }
 
-    /**
-     * 订阅阻塞队列(可订阅所有实现类 例如: 延迟 优先 有界 等)
-     */
     public static <T> void subscribeBlockingQueue(String queueName, Function<T, CompletionStage<Void>> consumer, boolean isDelayed) {
-        RBlockingQueue<T> queue = CLIENT.getBlockingQueue(queueName);
-        if (isDelayed) {
-            // 订阅延迟队列
-            CLIENT.getDelayedQueue(queue);
-        }
-        queue.subscribeOnElements(consumer);
+        CompletableFuture.runAsync(() -> {
+            while (!Thread.currentThread().isInterrupted()) {
+                T data = isDelayed ? getDelayedQueueObject(queueName) : getQueueObject(queueName);
+                if (data != null) {
+                    consumer.apply(data);
+                }
+            }
+        });
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private static Comparator<Object> comparator() {
+        return (left, right) -> {
+            if (left instanceof Comparable comparable) {
+                return comparable.compareTo(right);
+            }
+            return 0;
+        };
+    }
+
+    private record DelayedValue<T>(T value, long delayMillis, long startTime) implements Delayed {
+        private DelayedValue(T value, long delayMillis) {
+            this(value, delayMillis, System.currentTimeMillis());
+        }
+
+        @Override
+        public long getDelay(TimeUnit unit) {
+            long delay = startTime + delayMillis - System.currentTimeMillis();
+            return unit.convert(delay, TimeUnit.MILLISECONDS);
+        }
+
+        @Override
+        public int compareTo(Delayed other) {
+            return Long.compare(getDelay(TimeUnit.MILLISECONDS), other.getDelay(TimeUnit.MILLISECONDS));
+        }
+    }
 }
