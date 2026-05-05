@@ -48,12 +48,6 @@
             </dependency>
 
             <!-- 调度模块 -->
-            <dependency>
-                <groupId>org.dromara</groupId>
-                <artifactId>ruoyi-common-job</artifactId>
-                <version>${revision}</version>
-            </dependency>
-
             <!-- 日志记录 -->
             <dependency>
                 <groupId>org.dromara</groupId>

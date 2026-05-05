@@ -11,20 +11,16 @@
           * 容器框架 Undertow 基于 Netty 的高性能容器<br />
           * 权限认证框架 Sa-Token 支持多终端认证系统<br />
           * 关系数据库 MySQL 适配 8.X 最低 5.7<br />
-          * 缓存数据库 Redis 适配 6.X 最低 4.X<br />
+          * 本地缓存 Caffeine 兼容原缓存工具 API<br />
           * 数据库框架 Mybatis-Plus 快速 CRUD 增加开发效率<br />
           * 数据库框架 p6spy 更强劲的 SQL 分析<br />
           * 多数据源框架 dynamic-datasource 支持主从与多种类数据库异构<br />
           * 序列化框架 Jackson 统一使用 jackson 高效可靠<br />
-          * Redis客户端 Redisson 性能强劲、API丰富<br />
-          * 分布式限流 Redisson 全局、请求IP、集群ID 多种限流<br />
-          * 分布式锁 Lock4j 注解锁、工具锁 多种多样<br />
-          * 分布式幂等 Lock4j 基于分布式锁实现<br />
+          * 本地限流 支持全局、请求IP、客户端ID 多种限流<br />
+          * 本地幂等 基于进程内缓存实现<br />
           * 分布式链路追踪 SkyWalking 支持链路追踪、网格分析、度量聚合、可视化<br />
-          * 分布式任务调度 SnailJob 高性能 高可靠 易扩展<br />
           * 文件存储 Minio 本地存储<br />
           * 文件存储 七牛、阿里、腾讯 云存储<br />
-          * 监控框架 SpringBoot-Admin 全方位服务监控<br />
           * 校验框架 Validation 增强接口安全性 严谨性<br />
           * Excel框架 FastExcel(原Alibaba EasyExcel) 性能优异 扩展性强<br />
           * 文档框架 SpringDoc、javadoc 无注解零入侵基于java注释<br />

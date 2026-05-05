@@ -1680,7 +1680,7 @@ INSERT sys_menu VALUES (108, N'日志管理', 1, 9, N'log', N'', N'', 1, 0, N'M'
 GO
 INSERT sys_menu VALUES (109, N'在线用户', 2, 1, N'online', N'monitor/online/index', N'', 1, 0, N'C', N'0', N'0', N'monitor:online:list', N'online', 103, 1, getdate(), NULL, NULL, N'在线用户菜单')
 GO
-INSERT sys_menu VALUES (113, N'缓存监控', 2, 5, N'cache', N'monitor/cache/index', N'', 1, 0, N'C', N'0', N'0', N'monitor:cache:list', N'redis', 103, 1, getdate(), NULL, NULL, N'缓存监控菜单')
+INSERT sys_menu VALUES (113, N'缓存监控', 2, 5, N'cache', N'monitor/cache/index', N'', 1, 0, N'C', N'0', N'0', N'monitor:cache:list', N'monitor', 103, 1, getdate(), NULL, NULL, N'缓存监控菜单')
 GO
 INSERT sys_menu VALUES (115, N'代码生成', 3, 2, N'gen', N'tool/gen/index', N'', 1, 0, N'C', N'0', N'0', N'tool:gen:list', N'code', 103, 1, getdate(), NULL, NULL, N'代码生成菜单')
 GO
@@ -1701,11 +1701,7 @@ GO
 INSERT sys_menu VALUES (133, N'文件配置管理',  1,   10, N'oss-config/index',              N'system/oss/config', N'', 1, 1, N'C', N'1', N'0', N'system:ossConfig:list',  N'#',                103, 1, getdate(), null, null, N'/system/oss');
 GO
 
-监控菜单');
-GO
 INSERT sys_menu VALUES (118, N'文件管理', 1, 10, N'oss', N'system/oss/index', N'', 1, 0, N'C', '0', N'0', N'system:oss:list', N'upload', 103, 1, getdate(), NULL, NULL, N'文件管理菜单');
-GO
-ailJob控制台菜单');
 GO
 INSERT sys_menu VALUES (500, N'操作日志', 108, 1, N'operlog', N'monitor/operlog/index', N'', 1, 0, N'C', N'0', N'0', N'monitor:operlog:list', N'form', 103, 1, getdate(), NULL, NULL, N'操作日志菜单')
 GO
