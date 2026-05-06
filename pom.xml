@@ -27,7 +27,6 @@
         <mybatis-plus.version>3.5.16</mybatis-plus.version>
         <p6spy.version>3.9.1</p6spy.version>
         <hutool.version>5.8.43</hutool.version>
-        <spring-boot-admin.version>3.5.8</spring-boot-admin.version>
         <dynamic-ds.version>4.3.1</dynamic-ds.version>
         <mapstruct-plus.version>1.5.0</mapstruct-plus.version>
         <mapstruct-plus.lombok.version>0.2.0</mapstruct-plus.lombok.version>
@@ -240,17 +239,6 @@
                 <groupId>org.dromara.sms4j</groupId>
                 <artifactId>sms4j-spring-boot-starter</artifactId>
                 <version>${sms4j.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>de.codecentric</groupId>
-                <artifactId>spring-boot-admin-starter-server</artifactId>
-                <version>${spring-boot-admin.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>de.codecentric</groupId>
-                <artifactId>spring-boot-admin-starter-client</artifactId>
-                <version>${spring-boot-admin.version}</version>
             </dependency>
 
             <!-- 加密包引入 -->
