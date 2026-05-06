@@ -1,5 +1,8 @@
 ## 平台简介
 
+- 本仓库前端是基于 [RuoYi-Vue-Plus plus-ui](https://github.com/JavaLionLi/plus-ui) 精简整理的轻量模板版本，配套 `ruoyi-vue-plus-lite` 后端使用。
+- 相比原前端，本模板移除了 demo、workflow、monitor-admin、snailjob、缓存监控等已不适合轻量模板的页面与接口，用于快速落地常规中后台项目。
+- 原项目版权、协议与核心能力归属 Dromara RuoYi-Vue-Plus / plus-ui，本仓库仅作为轻量化二次整理版本维护。
 - 本仓库为前端技术栈 [Vue3](https://v3.cn.vuejs.org) + [TS](https://www.typescriptlang.org/) + [Element Plus](https://element-plus.org/zh-CN) + [Vite](https://cn.vitejs.dev) 版本。
 - 成员项目: 基于 vben5(ant-design-vue) 的前端项目 [ruoyi-plus-vben5](https://github.com/imdap/ruoyi-plus-vben5)
 - 成员项目: 基于soybean 的前端项目 [ruoyi-plus-soybean](https://gitee.com/xlsea/ruoyi-plus-soybean)

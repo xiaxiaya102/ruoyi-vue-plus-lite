@@ -4,6 +4,12 @@
 - - -
 ## 平台简介
 
+> 本仓库是基于 [Dromara RuoYi-Vue-Plus](https://gitee.com/dromara/RuoYi-Vue-Plus) 精简整理的轻量模板版本，用于快速落地中后台业务项目。
+>
+> 相比原项目，本模板移除了 demo、workflow、monitor-admin、snailjob、ruoyi-job、Redis/Redisson/Lock4j 等非必要或偏分布式的模块，默认使用本地缓存实现常用缓存、限流、幂等能力，减少启动和部署依赖。
+>
+> 原项目版权、协议与核心能力归属 Dromara RuoYi-Vue-Plus，本仓库仅作为轻量化二次整理版本维护。
+
 [![码云Gitee](https://gitee.com/dromara/RuoYi-Vue-Plus/badge/star.svg?theme=blue)](https://gitee.com/dromara/RuoYi-Vue-Plus)
 [![GitHub](https://img.shields.io/github/stars/dromara/RuoYi-Vue-Plus.svg?label=Github%20Stars)](https://github.com/dromara/RuoYi-Vue-Plus)
 [![Star](https://gitcode.com/dromara/RuoYi-Vue-Plus/star/badge.svg)](https://gitcode.com/dromara/RuoYi-Vue-Plus)
@@ -170,7 +176,6 @@ Topiam IAM/IDaaS身份管理平台 - https://www.topiam.cn/ <br>
 | ![输入图片说明](https://foruda.gitee.com/images/1735829153637063344/3c21fd4c_1419627.png "屏幕截图") | ![输入图片说明](https://foruda.gitee.com/images/1735829181303499815/4522cefa_1419627.png "屏幕截图") |
 | ![输入图片说明](https://foruda.gitee.com/images/1735829377205259767/76a705d7_1419627.png "屏幕截图") | ![输入图片说明](https://foruda.gitee.com/images/1722959592856812900/e2d0d342_1419627.png "屏幕截图") |
 | ![输入图片说明](https://foruda.gitee.com/images/1680079274333484664/4dfdc7c0_1766278.png "屏幕截图") | ![输入图片说明](https://foruda.gitee.com/images/1680079290467458224/d6715fcf_1766278.png "屏幕截图") |
-
 
 
 
