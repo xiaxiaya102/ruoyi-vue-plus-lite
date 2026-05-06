@@ -113,7 +113,6 @@ Topiam IAM/IDaaS身份管理平台 - https://www.topiam.cn/ <br>
 | 代码生成   | 多数据源前后端代码的生成（java、html、xml、sql）支持CRUD下载                              | 支持  | 仅支持单数据源          |
 | 系统接口   | 根据业务代码自动生成相关的api接口文档                                                 | 支持  | 支持               |
 | 服务监控   | 监视集群系统CPU、内存、磁盘、堆栈、在线日志、Spring相关配置等                                  | 支持  | 仅支持单机CPU、内存、磁盘监控 |
-| 缓存监控   | 对系统的缓存信息查询，命令统计等。                                                    | 支持  | 支持               |
 | 使用案例   | 系统的一些功能案例                                                            | 支持  | 不支持              |
 
 ## 参考文档
@@ -171,7 +170,6 @@ Topiam IAM/IDaaS身份管理平台 - https://www.topiam.cn/ <br>
 | ![输入图片说明](https://foruda.gitee.com/images/1735829153637063344/3c21fd4c_1419627.png "屏幕截图") | ![输入图片说明](https://foruda.gitee.com/images/1735829181303499815/4522cefa_1419627.png "屏幕截图") |
 | ![输入图片说明](https://foruda.gitee.com/images/1735829377205259767/76a705d7_1419627.png "屏幕截图") | ![输入图片说明](https://foruda.gitee.com/images/1722959592856812900/e2d0d342_1419627.png "屏幕截图") |
 | ![输入图片说明](https://foruda.gitee.com/images/1680079274333484664/4dfdc7c0_1766278.png "屏幕截图") | ![输入图片说明](https://foruda.gitee.com/images/1680079290467458224/d6715fcf_1766278.png "屏幕截图") |
-
 
 
 
